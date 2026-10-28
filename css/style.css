@@ -148,3 +148,7 @@
   #editorial-gallery .gallery-category-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   #editorial-gallery .gallery-category-group.single-photo-category .gallery-card { max-width: none; }
 }
+
+/* Small underlined prompts on each personal-interest card */
+.interest-card .interest-action{display:block;margin-top:10px;color:var(--green,#173f35);font-size:.82rem;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.interest-card:focus-visible{outline:2px solid var(--gold,#b99a64);outline-offset:3px}
