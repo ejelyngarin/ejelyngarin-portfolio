@@ -152,3 +152,33 @@
 /* Small underlined prompts on each personal-interest card */
 .interest-card .interest-action{display:block;margin-top:10px;color:var(--green,#173f35);font-size:.82rem;font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .interest-card:focus-visible{outline:2px solid var(--gold,#b99a64);outline-offset:3px}
+
+
+/* Achievements: category-first gallery with accessible photo pop-ups. */
+#editorial-gallery .achievement-category-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:30px}
+#editorial-gallery .achievement-category-card{appearance:none;width:100%;min-height:205px;padding:25px 22px;text-align:left;border:1px solid #dfe5da;border-radius:16px;background:rgba(255,255,255,.72);color:var(--green,#173f35);cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+#editorial-gallery .achievement-category-card:hover,#editorial-gallery .achievement-category-card:focus-visible{transform:translateY(-4px);border-color:#b99a64;box-shadow:0 14px 30px rgba(23,63,53,.10);outline:2px solid transparent}
+.achievement-category-icon{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#edf1e9;color:#8a7048;font-family:Georgia,serif;font-size:1.8rem;margin-bottom:17px}
+.achievement-category-name{font-family:var(--serif,'Playfair Display',serif);font-size:1.22rem;font-weight:600;line-height:1.25}
+.achievement-category-description{font-size:.86rem;line-height:1.55;color:#68756c;margin-top:8px}
+.achievement-category-action{font-size:.8rem;font-weight:700;text-decoration:underline;text-underline-offset:4px;margin-top:auto;padding-top:17px;color:#8a7048}
+.achievement-gallery-modal{position:fixed;inset:0;z-index:10000;background:rgba(13,25,20,.72);display:none;align-items:center;justify-content:center;padding:20px}
+.achievement-gallery-modal.open{display:flex}
+.achievement-gallery-panel{position:relative;width:min(100%,1000px);max-height:90vh;overflow:auto;background:#f7f4ec;color:#26372f;border-radius:18px;padding:clamp(24px,4vw,42px);box-shadow:0 25px 80px rgba(0,0,0,.28)}
+.achievement-gallery-panel .eyebrow{margin-right:55px}
+.achievement-gallery-panel h2{font-family:var(--serif,'Playfair Display',serif);font-size:clamp(2rem,4vw,3rem);margin:0 55px 8px 0;color:var(--green,#173f35)}
+.achievement-modal-intro{color:#68756c;margin-bottom:25px}
+.achievement-modal-close,.achievement-lightbox-close{position:absolute;top:15px;right:15px;width:42px;height:42px;border:1px solid #d7dfd5;border-radius:50%;background:#fff;color:#173f35;font-size:1.7rem;line-height:1;cursor:pointer;z-index:2}
+.achievement-modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.achievement-modal-photo{margin:0;min-width:0}
+.achievement-photo-open{display:block;width:100%;padding:0;border:0;background:#eeeae0;cursor:zoom-in;border-radius:10px;overflow:hidden}
+.achievement-photo-open img{display:block;width:100%;height:auto;max-height:560px;object-fit:contain}
+.achievement-modal-photo figcaption{font-size:.85rem;color:#68756c;padding-top:9px}
+.achievement-lightbox{position:fixed;inset:0;z-index:10001;background:rgba(8,14,12,.94);display:none;align-items:center;justify-content:center;flex-direction:column;padding:65px 24px 25px}
+.achievement-lightbox.open{display:flex}
+.achievement-lightbox img{max-width:min(100%,1100px);max-height:78vh;width:auto;height:auto;object-fit:contain}
+.achievement-lightbox p{color:#fff;text-align:center;margin:15px 0 0;font-size:.9rem}
+.achievement-lightbox-close{position:fixed;top:18px;right:20px;background:#f7f4ec}
+body.gallery-modal-open{overflow:hidden}
+@media(max-width:800px){#editorial-gallery .achievement-category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){#editorial-gallery .achievement-category-grid{grid-template-columns:1fr;gap:13px}.achievement-category-card{min-height:175px!important}.achievement-modal-grid{grid-template-columns:1fr}.achievement-gallery-modal{padding:8px}.achievement-gallery-panel{max-height:95vh;border-radius:14px;padding:24px 18px}.achievement-lightbox{padding-left:12px;padding-right:12px}}
