@@ -1,144 +1,107 @@
-/* Achievement gallery: category cards open a photo modal; photos open a larger lightbox. */
+/* Category-first achievement gallery. Photos stay hidden until a visitor opens a category. */
 const galleryPhotos = [
-  { category: "Awards & Recognition", title: "Awards & Recognition", caption: "Awards and recognition memories.", file: "achievement-awards-01.jpg" },
-  { category: "Awards & Recognition", title: "Awards & Recognition", caption: "Awards and recognition memories.", file: "achievement-awards-02.jpg" },
-  { category: "Awards & Recognition", title: "Awards & Recognition", caption: "Awards and recognition memories.", file: "achievement-awards-03.jpg" },
-  { category: "Awards & Recognition", title: "Awards & Recognition", caption: "Awards and recognition memories.", file: "achievement-awards-04.jpg" },
-  { category: "Clubs & Organizations", title: "Clubs & Organizations", caption: "School clubs and organization memories.", file: "achievement-clubs-01.jpg" },
-  { category: "Clubs & Organizations", title: "Clubs & Organizations", caption: "School clubs and organization memories.", file: "achievement-clubs-02.jpg" },
-  { category: "Leadership", title: "Leadership", caption: "Leadership experiences and responsibilities.", file: "achievement-leadership-01.jpg" },
-  { category: "Research & Projects", title: "Research & Projects", caption: "Research and project documentation.", file: "achievement-research-projects-01.jpg" },
-  { category: "School Events", title: "School Events", caption: "Memories from school activities and events.", file: "achievement-school-events-01.jpg" },
-  { category: "School Events", title: "School Events", caption: "Memories from school activities and events.", file: "achievement-school-events-02.jpg" },
-  { category: "Scouting & Community Service", title: "Scouting & Community Service", caption: "Scouting, service, and community involvement.", file: "achievement-scouting-community-01.jpg" }
+  { category: "Awards & Recognition", icon: "✦", description: "Certificates, honors, and academic recognition.", file: "achievement-awards-01.jpg" },
+  { category: "Awards & Recognition", icon: "✦", description: "Certificates, honors, and academic recognition.", file: "achievement-awards-02.jpg" },
+  { category: "Awards & Recognition", icon: "✦", description: "Certificates, honors, and academic recognition.", file: "achievement-awards-03.jpg" },
+  { category: "Awards & Recognition", icon: "✦", description: "Certificates, honors, and academic recognition.", file: "achievement-awards-04.jpg" },
+  { category: "Clubs & Organizations", icon: "♧", description: "Clubs, organizations, and school involvement.", file: "achievement-clubs-01.jpg" },
+  { category: "Clubs & Organizations", icon: "♧", description: "Clubs, organizations, and school involvement.", file: "achievement-clubs-02.jpg" },
+  { category: "Leadership", icon: "♙", description: "Leadership roles and responsibilities.", file: "achievement-leadership-01.jpg" },
+  { category: "Research & Projects", icon: "⌘", description: "Research work and product innovation.", file: "achievement-research-projects-01.jpg" },
+  { category: "School Events", icon: "✧", description: "School activities, events, and memories.", file: "achievement-school-events-01.jpg" },
+  { category: "School Events", icon: "✧", description: "School activities, events, and memories.", file: "achievement-school-events-02.jpg" },
+  { category: "Scouting & Community Service", icon: "❀", description: "Scouting, community participation, and service.", file: "achievement-scouting-community-01.jpg" }
 ];
 
-const categoryDetails = {
-  "Awards & Recognition": { icon: "✧", description: "Certificates, honors, and moments of recognition." },
-  "Leadership": { icon: "♧", description: "Roles, responsibilities, and opportunities to lead." },
-  "Clubs & Organizations": { icon: "◎", description: "The clubs and school organizations I took part in." },
-  "School Events": { icon: "◇", description: "Activities, performances, and memories from school." },
-  "Scouting & Community Service": { icon: "❋", description: "Scouting experiences, preparedness, and community service." },
-  "Research & Projects": { icon: "⌘", description: "Research work, projects, and creative exploration." }
-};
-
-(function renderEditorialGallery() {
-  const gallery = document.querySelector("#editorial-gallery");
-  if (!gallery) return;
-  gallery.replaceChildren();
-
-  const grouped = new Map();
+(() => {
+  const root = document.querySelector('#editorial-gallery');
+  if (!root) return;
+  const groups = new Map();
   galleryPhotos.forEach(photo => {
-    if (!grouped.has(photo.category)) grouped.set(photo.category, []);
-    grouped.get(photo.category).push(photo);
+    if (!groups.has(photo.category)) groups.set(photo.category, []);
+    groups.get(photo.category).push(photo);
   });
 
-  const categoryGrid = document.createElement("div");
-  categoryGrid.className = "achievement-category-grid";
+  const cards = document.createElement('div');
+  cards.className = 'achievement-category-grid';
+  groups.forEach((photos, category) => {
+    const first = photos[0];
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'achievement-category-card';
+    button.setAttribute('aria-label', `Open ${category} photo gallery`);
+    button.innerHTML = `<span class="category-icon" aria-hidden="true">${first.icon}</span><span class="category-card-title"></span><span class="category-card-description"></span><span class="category-card-action">View photos <span aria-hidden="true">↗</span></span>`;
+    button.querySelector('.category-card-title').textContent = category;
+    button.querySelector('.category-card-description').textContent = first.description;
+    button.addEventListener('click', () => openCategory(category, photos));
+    cards.appendChild(button);
+  });
+  root.replaceChildren(cards);
 
-  const modal = document.createElement("div");
-  modal.className = "achievement-gallery-modal";
-  modal.id = "achievement-gallery-modal";
-  modal.setAttribute("aria-hidden", "true");
-  modal.innerHTML = `
-    <div class="achievement-gallery-panel" role="dialog" aria-modal="true" aria-labelledby="achievement-modal-title" tabindex="-1">
-      <button class="achievement-modal-close" type="button" aria-label="Close gallery">×</button>
-      <p class="eyebrow">PHOTO COLLECTION</p>
-      <h2 id="achievement-modal-title"></h2>
-      <p class="achievement-modal-intro"></p>
-      <div class="achievement-modal-grid"></div>
-    </div>`;
+  const modal = document.createElement('div');
+  modal.className = 'achievement-modal';
+  modal.hidden = true;
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.setAttribute('aria-labelledby', 'achievement-modal-title');
+  modal.innerHTML = `<div class="achievement-modal-backdrop" data-close="true"></div><section class="achievement-modal-panel"><div class="achievement-modal-heading"><div><p class="eyebrow">PHOTO COLLECTION</p><h2 id="achievement-modal-title"></h2><p class="achievement-modal-description">A collection of moments and milestones.</p></div><button class="achievement-modal-close" type="button" aria-label="Close gallery">×</button></div><div class="achievement-modal-grid"></div></section>`;
   document.body.appendChild(modal);
-
-  const lightbox = document.createElement("div");
-  lightbox.className = "achievement-lightbox";
-  lightbox.id = "achievement-lightbox";
-  lightbox.setAttribute("aria-hidden", "true");
-  lightbox.innerHTML = `
-    <button class="achievement-lightbox-close" type="button" aria-label="Close enlarged photo">×</button>
-    <img alt="" src="">
-    <p></p>`;
-  document.body.appendChild(lightbox);
-
-  const modalPanel = modal.querySelector(".achievement-gallery-panel");
-  const modalTitle = modal.querySelector("#achievement-modal-title");
-  const modalIntro = modal.querySelector(".achievement-modal-intro");
-  const modalGrid = modal.querySelector(".achievement-modal-grid");
+  const closeButton = modal.querySelector('.achievement-modal-close');
+  const modalGrid = modal.querySelector('.achievement-modal-grid');
   let previousFocus = null;
 
-  function closeLightbox() {
-    lightbox.classList.remove("open");
-    lightbox.setAttribute("aria-hidden", "true");
-    lightbox.querySelector("img").src = "";
-  }
-  function closeModal() {
-    closeLightbox();
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("gallery-modal-open");
+  function closeCategory() {
+    modal.hidden = true;
+    document.body.classList.remove('gallery-modal-open');
     if (previousFocus) previousFocus.focus();
   }
-  function openLightbox(photo) {
-    const img = lightbox.querySelector("img");
-    img.src = "images/" + photo.file;
-    img.alt = photo.title;
-    lightbox.querySelector("p").textContent = photo.caption;
-    lightbox.classList.add("open");
-    lightbox.setAttribute("aria-hidden", "false");
-    lightbox.querySelector(".achievement-lightbox-close").focus();
-  }
-  function openCategory(category, trigger) {
-    previousFocus = trigger;
-    const details = categoryDetails[category] || {};
-    modalTitle.textContent = category;
-    modalIntro.textContent = details.description || "Explore photographs from this category.";
+  function openCategory(category, photos) {
+    previousFocus = document.activeElement;
+    modal.querySelector('#achievement-modal-title').textContent = category;
     modalGrid.replaceChildren();
-    grouped.get(category).forEach(photo => {
-      const item = document.createElement("figure");
-      item.className = "achievement-modal-photo";
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "achievement-photo-open";
-      button.setAttribute("aria-label", "View larger: " + photo.title);
-      const img = document.createElement("img");
-      img.src = "images/" + photo.file;
-      img.alt = photo.title;
-      img.loading = "lazy";
-      img.decoding = "async";
-      button.appendChild(img);
-      button.addEventListener("click", () => openLightbox(photo));
-      const caption = document.createElement("figcaption");
-      caption.textContent = photo.caption;
-      item.append(button, caption);
-      modalGrid.appendChild(item);
+    photos.forEach((photo, index) => {
+      const figure = document.createElement('figure');
+      figure.className = 'achievement-modal-photo';
+      const imageButton = document.createElement('button');
+      imageButton.type = 'button';
+      imageButton.className = 'achievement-image-button';
+      imageButton.setAttribute('aria-label', `View photo ${index + 1} larger`);
+      const img = document.createElement('img');
+      img.src = `images/${photo.file}`;
+      img.alt = `${category} photo ${index + 1}`;
+      img.loading = 'lazy';
+      imageButton.appendChild(img);
+      imageButton.addEventListener('click', () => openLightbox(img.src, img.alt));
+      figure.appendChild(imageButton);
+      modalGrid.appendChild(figure);
     });
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.classList.add("gallery-modal-open");
-    modal.querySelector(".achievement-modal-close").focus();
+    modal.hidden = false;
+    document.body.classList.add('gallery-modal-open');
+    closeButton.focus();
   }
-
-  grouped.forEach((photos, category) => {
-    const details = categoryDetails[category] || { icon: "✧", description: "Explore this collection." };
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "achievement-category-card searchable-item";
-    card.innerHTML = `<span class="achievement-category-icon" aria-hidden="true">${details.icon}</span><span class="achievement-category-name"></span><span class="achievement-category-description"></span><span class="achievement-category-action">Explore photos <span aria-hidden="true">↗</span></span>`;
-    card.querySelector(".achievement-category-name").textContent = category;
-    card.querySelector(".achievement-category-description").textContent = details.description;
-    card.addEventListener("click", () => openCategory(category, card));
-    categoryGrid.appendChild(card);
-  });
-  gallery.appendChild(categoryGrid);
-
-  modal.querySelector(".achievement-modal-close").addEventListener("click", closeModal);
-  modal.addEventListener("click", event => { if (event.target === modal) closeModal(); });
-  lightbox.querySelector(".achievement-lightbox-close").addEventListener("click", closeLightbox);
-  lightbox.addEventListener("click", event => { if (event.target === lightbox) closeLightbox(); });
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape") {
-      if (lightbox.classList.contains("open")) closeLightbox();
-      else if (modal.classList.contains("open")) closeModal();
+  closeButton.addEventListener('click', closeCategory);
+  modal.addEventListener('click', event => { if (event.target.dataset.close === 'true') closeCategory(); });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      if (lightbox && !lightbox.hidden) closeLightbox();
+      else if (!modal.hidden) closeCategory();
     }
   });
+
+  const lightbox = document.createElement('div');
+  lightbox.className = 'achievement-lightbox';
+  lightbox.hidden = true;
+  lightbox.setAttribute('role', 'dialog');
+  lightbox.setAttribute('aria-modal', 'true');
+  lightbox.innerHTML = `<button type="button" class="achievement-lightbox-close" aria-label="Close enlarged photo">×</button><img alt="">`;
+  document.body.appendChild(lightbox);
+  function openLightbox(src, alt) {
+    const image = lightbox.querySelector('img');
+    image.src = src; image.alt = alt;
+    lightbox.hidden = false;
+    lightbox.querySelector('button').focus();
+  }
+  function closeLightbox() { lightbox.hidden = true; }
+  lightbox.querySelector('button').addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', event => { if (event.target === lightbox) closeLightbox(); });
 })();
