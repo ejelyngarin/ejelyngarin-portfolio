@@ -12,6 +12,7 @@
     { category: "Awards & Recognition", icon: "✦", description: "Certificates, honors, and academic recognition.", file: "achievement-awards-01.jpg", caption: "Awards and academic recognition." },
     { category: "Awards & Recognition", icon: "✦", description: "Certificates, honors, and academic recognition.", file: "achievement-awards-03.jpg", caption: "Awards and academic recognition." },
     { category: "Awards & Recognition", icon: "✦", description: "Certificates, honors, and academic recognition.", file: "achievement-awards-04.jpg", caption: "Awards and academic recognition." },
+    { category: "Awards & Recognition", icon: "✦", description: "Certificates, honors, and academic recognition.", file: "achievements-awards-02.jpg", caption: "Awards and academic recognition." },
     { category: "Leadership", icon: "♙", description: "Leadership roles and responsibilities.", file: "achievement-leadership-01.jpg", caption: "Leadership experiences and responsibilities." },
     { category: "Clubs & Organizations", icon: "♧", description: "Clubs, organizations, and school involvement.", file: "achievement-clubs-01.jpg", caption: "School clubs and organization memories." },
     { category: "Clubs & Organizations", icon: "♧", description: "Clubs, organizations, and school involvement.", file: "achievement-clubs-02.jpg", caption: "School clubs and organization memories." },
